@@ -20,7 +20,11 @@ class SuperComplete(sublime_plugin.EventListener):
             args = _find_closest_scope(
                 view, 'meta.function.parameters.python', target)
 
-            self_name, other_args = args.split(',', 1)
+            if ',' in args:
+                self_name, other_args = args.split(',', 1)
+            else:
+                self_name = args
+                other_args = ''
 
             return [('auto-super()', 'super(%s, %s).%s(${1:%s})' % (
                 cls_name, self_name, fn_name, other_args.strip()))]
