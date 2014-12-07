@@ -17,7 +17,7 @@ class AHappyClass(JustSwellBase):
 
 ```
 
-SubleText's own parsing is used to guess the "current" class name, method name and arguments, which should be fine almost all the time, but may in rare cases pick up the wrong thing, say, if there's an innter class or method definition between the call to `super` and the real method signature. 
+SublimeText's own parsing is used to guess the "current" class name, method name and arguments. Also snippet checks indent of current line to find appropriate class and method more accurately in cases if there's an inner class or method definition between the call to `super` and the real method signature. 
 
 Installation
 ------------
