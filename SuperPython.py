@@ -22,12 +22,21 @@ class PythonSuperComplete(sublime_plugin.EventListener):
             return
         current_row = self._get_row(view, target)
         try:
-            fn_region = self._find_closest_scope(view, 'entity.name.function.python', target, indent, current_row)
-            args_region = self._find_closest_scope(view, 'meta.function.parameters.python', target, indent, current_row)
+            fn_region = self._find_closest_scope(
+                view, 'entity.name.function.python', target, indent,
+                current_row)
             fn_indent = self._get_indent(view, fn_region)
             # search class scope with lower indentation level than founded function
-            cls_region = self._find_closest_scope(view, 'entity.name.type.class.python', target, fn_indent, current_row)
-        except IndexError:
+            cls_region = self._find_closest_scope(
+                view, 'entity.name.class.python', target, fn_indent,
+                current_row)
+            args_regions = view.find_by_selector(
+                'meta.function.parameters.python')
+            args_regions = [
+                m for m in args_regions if current_row > self._get_row(view, m) and
+                m.a >= fn_region.b and m.b < locations[0]]
+        except IndexError as e:
+            print(e)
             # We could't find some scope
             return
 
@@ -39,7 +48,8 @@ class PythonSuperComplete(sublime_plugin.EventListener):
 
         fn_name = view.substr(fn_region)
         cls_name = view.substr(cls_region)
-        args = view.substr(args_region)
+        args = ''.join(view.substr(m) for m in args_regions
+                       ).lstrip('(').rstrip(')')
 
         if ',' in args:
             self_name, other_args = args.split(',', 1)
@@ -53,6 +63,8 @@ class PythonSuperComplete(sublime_plugin.EventListener):
     def _find_closest_scope(self, view, scope, target, min_indent, max_row):
         # use last found scope upper than current line and with smaller indentation level
         matches = view.find_by_selector(scope)
+        if not matches:
+            raise Exception("Cannot find " + scope)
         matches = [m for m in matches if self._get_indent(view, m) < min_indent and max_row > self._get_row(view, m)]
         return matches[-1]
 
