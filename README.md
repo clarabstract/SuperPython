@@ -32,3 +32,21 @@ You know the drill. To install this plugin, you have two options:
 ```bash
 $ git clone https://github.com/rubyruy/SuperPython
 ```
+
+## Config
+
+You can add some settings in your Sublime's project file:
+
+* `superpython.prefix` - any string which will be trigger for completion. Default is `super`
+* `superpython.style` - support only two values: `full` and `short`. Default is `short`. "Short"-style is Python 3's style: `super().func(*args, **kwargs)`
+
+Example:
+```json
+{
+    "settings":
+    {
+        "superpython.prefix": "foo",
+        "superpython.style": "full",
+    }
+}
+```
